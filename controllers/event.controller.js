@@ -67,6 +67,35 @@ const createEvent = async (req, res) => {
     }
 }
 
+const checkEventAccess = async (req, res) => {
+    try {
+        const eventId = req.params.eventId
+
+        const eventService = new EventService()
+        const foundedEvent = await eventService.getEventById(eventId)
+
+        if (!foundedEvent) {
+            return res.status(404).json({
+                error: 'Event not found',
+            })            
+        }
+
+        const currentTime = new Date()
+        if (currentTime >= foundedEvent.startTime && currentTime <= foundedEvent.endTime) {
+            res.status(200).json({
+                message: `Event is active, accessible ${foundedEvent.name}`,
+            })   
+        } else {
+            res.status(403).json({
+                error: `Event is not active, not accessible ${foundedEvent.name}`,
+            })
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
+}
+
 module.exports = {
-    createEvent
+    createEvent,
+    checkEventAccess,
 }

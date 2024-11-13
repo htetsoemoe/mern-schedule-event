@@ -10,4 +10,8 @@ module.exports = class EventService {
     async createEvent(eventData) {
         return await this.eventModel.create(eventData)
     }
+
+    async getEventById(eventId) {
+        return await this.eventModel.findById(eventId)
+    }
 }
